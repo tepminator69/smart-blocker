@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Smart Blocker</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<!-- Moving, blurred circles behind the glass -->
+<div class="bg" aria-hidden="true">
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="orb o3"></div>
+  <svg class="grain"><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"></feTurbulence></filter><rect width="100%" height="100%" filter="url(#grain)"></rect></svg>
+</div>
+
+<div class="app">
+  <header id="head" class="head"></header>
+  <main id="view" class="view"></main>
+</div>
+
+<nav id="nav" class="glass nav" aria-label="Sections"></nav>
+<div id="sheet" class="sheet-layer" aria-hidden="true"></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

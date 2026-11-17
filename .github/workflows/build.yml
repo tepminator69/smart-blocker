@@ -1,0 +1,50 @@
+# Builds the APK on GitHub's computers every time new code is pushed,
+# then puts SmartBlocker.apk on the repository's "Releases" page so you can download it on your phone.
+name: Build APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v4
+
+      - name: Install Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build the APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace
+
+      - name: Rename the APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk SmartBlocker.apk
+
+      - name: Keep the APK with this build
+        uses: actions/upload-artifact@v4
+        with:
+          name: SmartBlocker-apk
+          path: SmartBlocker.apk
+
+      - name: Publish it on the Releases page
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest SmartBlocker.apk \
+            --title "Smart Blocker — latest build" \
+            --notes "Built from commit ${GITHUB_SHA::7}. On your phone: download SmartBlocker.apk, open it, and allow installing from this source."
